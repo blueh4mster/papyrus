@@ -7,6 +7,10 @@ module HTLC::htlc_aptos {
     use aptos_framework::table;
     use aptos_framework::account;
 
+    struct EscrowVault<phantom Currency> has key, store {
+        balance: coin::Coin<Currency>,
+    }
+
     struct Swap<phantom Currency> has store, key {
         sender: address,
         receiver: address,
@@ -26,14 +30,14 @@ module HTLC::htlc_aptos {
         });
     }
 
-    public fun lock<Currency: store>(
+    public fun lock<Currency: store> (
         account: &signer,
         id: vector<u8>,
         receiver: address,
         amount: u64,
         hashlock: vector<u8>,
         timelock: u64
-    ) {
+    ) acquires Store {
         let sender = signer::address_of(account);
         let coins = coin::withdraw<Currency>(account, amount);
 
@@ -51,15 +55,15 @@ module HTLC::htlc_aptos {
             claimed: false,
         });
 
-        coin::deposit<Currency>(@0x1, coins); // Escrow
+        move_to(account, EscrowVault<Currency> {balance: coins,});
     }
 
-    public fun claim<Currency: store>(
+    public fun claim<Currency: store> (
         account: &signer,
         sender: address,
         id: vector<u8>,
         secret: vector<u8>
-    ) {
+    ) acquires Store, EscrowVault {
         let receiver = signer::address_of(account);
         let store = borrow_global_mut<Store<Currency>>(sender);
         let swap = table::borrow_mut(&mut store.swaps, id);
@@ -71,15 +75,15 @@ module HTLC::htlc_aptos {
         swap.claimed = true;
 
         // Withdraw from escrow
-        let escrow = account::create_signer(@0x1);
-        let coins = coin::withdraw<Currency>(&escrow, swap.amount);
+        let vault = borrow_global_mut<EscrowVault<Currency>>(sender);
+        let coins = coin::extract(&mut vault.balance, swap.amount);
         coin::deposit<Currency>(receiver, coins);
     }
 
-    public fun refund<Currency: store>(
+    public fun refund<Currency: store> (
         account: &signer,
         id: vector<u8>
-    ) {
+    ) acquires Store, EscrowVault {
         let sender = signer::address_of(account);
         let store = borrow_global_mut<Store<Currency>>(sender);
         let swap = table::borrow_mut(&mut store.swaps, id);
@@ -87,8 +91,8 @@ module HTLC::htlc_aptos {
         assert!(timestamp::now_seconds() > swap.timelock, 104);
 
         // Refund from escrow
-        let escrow = account::create_signer(@0x1);
-        let coins = coin::withdraw<Currency>(&escrow, swap.amount);
+        let vault = borrow_global_mut<EscrowVault<Currency>>(sender);
+        let coins = coin::extract(&mut vault.balance, swap.amount);
         coin::deposit<Currency>(sender, coins);
     }
 }

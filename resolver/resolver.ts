@@ -7,7 +7,7 @@ async function startResolver() {
   await watchHTLCEvents(async (event: any) => {
     const { hashlock, sender, receiver, amount, expiry } = event;
 
-    console.log(`🔁 Swap Event Detected:
+    console.log(` Swap Event Detected:
       Sender: ${sender}
       Receiver: ${receiver}
       Hashlock: ${hashlock}
@@ -22,9 +22,9 @@ async function startResolver() {
         expiry,
       });
 
-      console.log(`✅ Redeemed on Aptos: ${txHash}`);
+      console.log(`Redeemed on Aptos: ${txHash}`);
     } catch (err) {
-      console.error("❌ Error resolving swap on Aptos:", err);
+      console.error("Error resolving swap on Aptos:", err);
     }
   });
 }

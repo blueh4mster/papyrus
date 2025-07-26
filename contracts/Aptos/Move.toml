@@ -4,7 +4,7 @@ version = "1.0.0"
 authors = []
 
 [addresses]
-HTLC = "0xCAFEBABE"
+HTLC = "0x29feaff0b7574e5671c2b0c7f09406bc0eb8ea039331ebf35d97c592a2d6fca0"
 
 [dev-addresses]
 
