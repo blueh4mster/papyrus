@@ -1,5 +1,5 @@
-import { watchHTLCEvents } from '../frontend/src/lib/ethereumClient';
-import { redeemOnAptos } from '../frontend/src/lib/aptosClient';
+import { watchHTLCEvents } from './ethereumClient';
+import { redeemOnAptos } from './aptosClient';
 
 async function startResolver() {
   console.log("Starting cross-chain resolver...");

@@ -21,5 +21,5 @@ export async function watchHTLCEvents(callback: Function) {
     });
   });
 
-  console.log("👀 Watching for Locked HTLC events...");
+  console.log("Watching for Locked HTLC events...");
 }
