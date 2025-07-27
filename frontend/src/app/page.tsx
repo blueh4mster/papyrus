@@ -3,7 +3,7 @@
 import HTLCFlow from "./HTLCFlow";
 import ConnectWallet from "./connectWallet";
 import LockedInstanceCard from "./lockedInstanceCard";
-import { contract } from "@/service/helper";
+import { connection } from "@/service/helper";
 
 import { useState, useEffect } from "react";
 import {ethers} from "ethers"
@@ -21,12 +21,12 @@ export default function Home() {
   const [account, setAccount] = useState<string | null>(null);
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
-  const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [lockedInstances, setLockedInstances] = useState<LockedInstance[]>([]);
 
   useEffect(() => {
     const getLocks = async () => {
-      const logs = await contract!.queryFilter("Lock"); // event Lock(bytes32 id, address sender, ...)
+      const contract = (await connection()).contract;
+      const logs = await contract!.queryFilter("Locked"); // event Lock(bytes32 id, address sender, ...)
       const instances = logs.map(log => (
         {
         id: log.args!.id,

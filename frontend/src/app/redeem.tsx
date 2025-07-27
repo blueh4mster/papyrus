@@ -1,36 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { startResolver } from "@/service/resolver";
 
-export default function RedeemButton({hash, receiver, amount}:{hash: any, receiver:any, amount:Number}) {
+export default function RedeemButton({secret}:{secret:string}) {
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  async function handleRedeem() {
-    setLoading(true);
-
-    const response = await fetch("/api/redeem", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        hashlock: hash, 
-        receiver: receiver,
-        amount: amount,
-        expiry: 99999999,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      setTxHash(result.txHash);
-    } else {
-      alert("Error: " + result.error);
-    }
-
-    setLoading(false);
+  const handleRedeem = async() => {
+    console.log("claiming...")
+    setLoading(true)
+    await startResolver(secret);
+    console.log("claimed!")
+    setLoading(false)
   }
 
   return (

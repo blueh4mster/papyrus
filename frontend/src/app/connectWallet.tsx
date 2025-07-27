@@ -27,30 +27,11 @@ export default function ConnectWallet({account, provider, signer, setAccount, se
     }
   };
 
-  const sendTransaction = async () => {
-    if (!signer) return alert("Wallet not connected!");
-
-    try {
-      const tx = await signer.sendTransaction({
-        to: "0xYourRecipientAddressHere",
-        value: ethers.utils.parseEther("0.01"),
-      });
-      await tx.wait();
-      alert("Transaction sent!");
-    } catch (err) {
-      console.error("Transaction failed:", err);
-    }
-  };
-
   return (
     <div>
       <button onClick={connectWallet}>
         {account ? `Connected: ${account.slice(0, 6)}...` : "Connect Wallet"}
       </button>
-
-      {account && (
-        <button onClick={sendTransaction}>Send 0.01 ETH</button>
-      )}
     </div>
   );
 }

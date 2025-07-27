@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import abi from "./abi.json"
-import {contract} from './helper'
+import {connection} from './helper'
 
 const HTLC_ABI:any = abi;
 const HTLC_ADDRESS = process.env.NEXT_PUBLIC_ETHEREUM_HTLC_ADDRESS!;
@@ -37,7 +37,7 @@ export async function lockFunds({
   //   amt,
   //   hashlock_,
   //   timelock);
-
+  const contract = (await connection()).contract;
   const tx = await contract.lock(
     id, 
     receiver,

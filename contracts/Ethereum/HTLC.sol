@@ -9,7 +9,7 @@ interface IERC20 {
 contract HTLC_EVM {
     struct Swap {
         address sender;
-        address receiver;
+        bytes32 receiver;
         address token;
         uint256 amount;
         bytes32 hashlock;
@@ -26,7 +26,7 @@ contract HTLC_EVM {
 
     function lock(
         bytes32 id,
-        address receiver,
+        bytes32 receiver,
         address token,
         uint256 amount,
         bytes32 hashlock,

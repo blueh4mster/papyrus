@@ -10,6 +10,13 @@ declare global {
 const HTLC_ABI:any = abi;
 const HTLC_ADDRESS = process.env.NEXT_PUBLIC_ETHEREUM_HTLC_ADDRESS!;
 
-export const provider = new ethers.providers.Web3Provider(window.ethereum!);
-export const signer = provider.getSigner();
-export const contract = new ethers.Contract(HTLC_ADDRESS, HTLC_ABI, signer);
+export async function connection() {
+  const provider = new ethers.providers.Web3Provider(window.ethereum!);
+  const signer = provider.getSigner();
+  const contract = new ethers.Contract(HTLC_ADDRESS, HTLC_ABI, signer);
+
+  return {
+    provider, signer, contract
+  }
+  
+}

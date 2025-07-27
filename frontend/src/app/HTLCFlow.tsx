@@ -9,16 +9,6 @@ import RedeemButton from './redeem'
 import LockButton from "./lock";
 import {ethers} from "ethers";
 
-type LockedInstance = {
-  id: string;
-  receiver: string;
-  amt: ethers.BigNumber;
-  tokenAddress: string;
-  hashlock: string;
-  txn_hash: string;
-  timelock: number;
-};
-
 export default function HTLCFlow() {
   const [step, setStep] = useState(1);
   const [secret, setSecret] = useState("");
@@ -88,7 +78,7 @@ export default function HTLCFlow() {
             <div className="mt-6">
               <p className="text-sm mb-2">Step 3: Reveal the secret on Ethereum to claim the funds.</p>
               <Input readOnly value={secret} className="text-xs" />
-              <RedeemButton hash={hash} receiver={receiver} amount={amt}/>
+              <RedeemButton secret={secret}/>
             </div>
           )}
         </CardContent>

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import React from "react";
-import { signer } from "@/service/helper";
+import { connection } from "@/service/helper";
 
 interface LockedInstanceCardProps {
   id: string;
@@ -15,7 +15,9 @@ const LockedInstanceCard: React.FC<LockedInstanceCardProps> = async ({
   receiver,
   amt,
 }) => {
-    const amt_string = amt.toString()
+    const amt_string = amt.toString();
+    const obj = await connection();
+    const signer = obj.signer;
     const addr = await signer.getAddress();
 
   const formatDate = (timestamp: number) => {
@@ -28,7 +30,7 @@ const LockedInstanceCard: React.FC<LockedInstanceCardProps> = async ({
   }
 
   const claim = async() => {
-    
+
   }
 
   return (
