@@ -1,11 +1,23 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { sha256 } from "js-sha256";
 import RedeemButton from './redeem' 
+import LockButton from "./lock";
+import {ethers} from "ethers";
+
+type LockedInstance = {
+  id: string;
+  receiver: string;
+  amt: ethers.BigNumber;
+  tokenAddress: string;
+  hashlock: string;
+  txn_hash: string;
+  timelock: number;
+};
 
 export default function HTLCFlow() {
   const [step, setStep] = useState(1);
@@ -28,9 +40,13 @@ export default function HTLCFlow() {
     setStep(3);
   };
 
-  const lock = () =>{
+  const inputReceiver = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setReceiver(e.target.value);
+  };
 
-  }
+  const inputAmt = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmt(Number(e.target.value));
+  };
 
   return (
     <main className="max-w-xl mx-auto mt-10 space-y-6">
@@ -57,13 +73,13 @@ export default function HTLCFlow() {
           {step === 2 && (
             <div className="mt-6 space-y-3">
                 <p className="text-sm">Receiver :</p>
-                <Input readOnly value={receiver} className="text-xs" />
+                <Input onChange={inputReceiver} className="text-xs" />
                 <p className="text-sm">Amount :</p>
-                <Input readOnly value={amt} className="text-xs" />
+                <Input onChange={inputAmt} className="text-xs" />
                 <p className="text-sm">
                 Step 2: Lock funds on Ethereum using the hash above. Once the other party locks on Aptos, click below.
               </p>
-              <Button onClick={lock}> Lock Funds On Aptos </Button>
+              <LockButton hash={hash} receiver={receiver} amount={amt}/>
               <Button onClick={revealSecret}>I locked on Aptos</Button>
             </div>
           )}

@@ -1,0 +1,56 @@
+import { useState } from "react";
+import { ethers } from "ethers";
+
+export default function ConnectWallet({account, provider, signer, setAccount, setProvider, setSigner}:{account:string | null,
+    provider:ethers.providers.Web3Provider | null, signer:ethers.Signer | null, 
+    setAccount: React.Dispatch<React.SetStateAction<string | null>>, 
+    setProvider: React.Dispatch<React.SetStateAction<ethers.providers.Web3Provider | null>>, 
+    setSigner: React.Dispatch<React.SetStateAction<ethers.Signer | null>>}) {
+
+  const connectWallet = async () => {
+    if (typeof window.ethereum === "undefined") {
+      alert("MetaMask not found");
+      return;
+    }
+
+    try {
+      const ethProvider = new ethers.providers.Web3Provider(window.ethereum);
+      await ethProvider.send("eth_requestAccounts", []); // prompts MetaMask connect
+      const userSigner = ethProvider.getSigner();
+      const userAddress = await userSigner.getAddress();
+
+      setProvider(ethProvider);
+      setSigner(userSigner);
+      setAccount(userAddress);
+    } catch (err) {
+      console.error("Connection error:", err);
+    }
+  };
+
+  const sendTransaction = async () => {
+    if (!signer) return alert("Wallet not connected!");
+
+    try {
+      const tx = await signer.sendTransaction({
+        to: "0xYourRecipientAddressHere",
+        value: ethers.utils.parseEther("0.01"),
+      });
+      await tx.wait();
+      alert("Transaction sent!");
+    } catch (err) {
+      console.error("Transaction failed:", err);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={connectWallet}>
+        {account ? `Connected: ${account.slice(0, 6)}...` : "Connect Wallet"}
+      </button>
+
+      {account && (
+        <button onClick={sendTransaction}>Send 0.01 ETH</button>
+      )}
+    </div>
+  );
+}
