@@ -14,6 +14,9 @@ export async function lockFunds({
   hashlock: string;
   amountInEth: string;
 }) {
+  const contract = (await connection()).contract;
+  const signer = (await connection()).signer;
+
   const tokenAddress = "0xdd13E55209Fd76AfE204dBda4007C227904f0a81" //weth address sepolia
   const timelock = Math.floor(Date.now() / 1000) + 3600; 
   const id = ethers.utils.hexlify(ethers.utils.randomBytes(32));
@@ -30,14 +33,12 @@ export async function lockFunds({
   // const balance = await weth.balanceOf("0x54794702f3c99e225569c7743B26c20d6360E762");
   // console.log("WETH Balance:", ethers.utils.formatEther(balance));
   // await weth.approve(HTLC_ADDRESS, ethers.utils.parseEther("0.002"));
+  console.log(receiver)
+  console.log(id)
+  console.log(amt)
+  console.log(tokenAddress)
+  console.log(hashlock_)
 
-  // await contract.callStatic.lock(id, 
-  //   receiver,
-  //   tokenAddress,
-  //   amt,
-  //   hashlock_,
-  //   timelock);
-  const contract = (await connection()).contract;
   const tx = await contract.lock(
     id, 
     receiver,
