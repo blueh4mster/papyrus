@@ -1,7 +1,7 @@
 'use client';
 
 import HTLCFlow from "./HTLCFlow";
-import ConnectWallet from "./connectWallet";
+import { MultiWalletUI } from "./bothWallets";
 import LockedInstanceCard from "./lockedInstanceCard";
 import { connection } from "@/service/helper";
 
@@ -18,9 +18,6 @@ type LockedInstance = {
 };
 
 export default function Home() {
-  const [account, setAccount] = useState<string | null>(null);
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
-  const [signer, setSigner] = useState<ethers.Signer | null>(null);
   const [lockedInstances, setLockedInstances] = useState<LockedInstance[]>([]);
 
   useEffect(() => {
@@ -43,7 +40,7 @@ export default function Home() {
 
   return (
     <>
-    <ConnectWallet account={account} provider={provider} signer={signer} setAccount={setAccount} setProvider={setProvider} setSigner={setSigner}/>
+    <MultiWalletUI/>
     <HTLCFlow/>
     {lockedInstances.length === 0 && 
       (<div>

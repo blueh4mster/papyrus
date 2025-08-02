@@ -51,6 +51,20 @@ contract HTLC_EVM {
         emit Claimed(id, secret);
     }
 
+    pub fun claimSingle<Currency> (
+        account: &signer,
+        hashlock: vector<u8>,
+        secret: vector<u8>,
+        timelock: u64,
+        amount: u64
+    ){
+        let reciever = signer::address_of(account);
+        assert!(timestamp::now_seconds() <= timelock, 101);
+        assert!(hash::sha2_256(&secret) == hashlock, 102);
+        let coins = coin::withdraw<Currency>(&signer::borrow_address(account), amount);
+        coin::deposit<Currency>(receiver, coins);
+    }
+
     function refund(bytes32 id) external {
         Swap storage s = swaps[id];
         require(!s.claimed && !s.refunded, "Already handled");

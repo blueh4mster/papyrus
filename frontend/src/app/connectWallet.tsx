@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ethers } from "ethers";
 
 export default function ConnectWallet({account, provider, signer, setAccount, setProvider, setSigner}:{account:string | null,
