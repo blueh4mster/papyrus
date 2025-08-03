@@ -13,6 +13,7 @@ export default function RedeemButton({secret}:{secret:string}) {
     await startResolver(secret);
     console.log("claimed!")
     setLoading(false)
+    
   }
 
   return (

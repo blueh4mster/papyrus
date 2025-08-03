@@ -1,28 +1,22 @@
 import { watchHTLCEvents } from './ethereumClient';
 import { redeemOnAptos } from './aptosClient';
 
-export async function startResolver(secret : string) {
+export async function startResolver(secret : string, receiver: string) {
   console.log("Starting cross-chain resolver...");
 
   await watchHTLCEvents(async (event: any) => {
-    const { id, sender, receiver, amount } = event;
+    const { id, sender, receiver, amount, hashlock, timelock } = event;
 
     console.log(` Swap Event Detected:
       Sender: ${sender}
       Receiver: ${receiver}
       Id: ${id}
       Amount: ${amount}
+      Hashlock: ${hashlock}
+      Timelock: ${timelock}
     `);
 
-    // Validate time + hashlock on Aptos and attempt redeem
-    try {
-      const txHash = await redeemOnAptos({
-        sender, id, secret
-      });
-
-      console.log(`Redeemed on Aptos: ${txHash}`);
-    } catch (err) {
-      console.error("Error resolving swap on Aptos:", err);
-    }
+    const tx_hash = await redeemOnAptos(receiver, hashlock, secret, timelock, amount);
+    console.log(tx_hash);
   });
 }

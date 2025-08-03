@@ -69,14 +69,14 @@ export default function HTLCFlow() {
                 <p className="text-sm">
                 Step 2: Lock funds on Ethereum using the hash above. Once the other party locks on Aptos, click below.
               </p>
-              <LockButton hash={hash} receiver={receiver} amount={amt}/>
-              <Button onClick={revealSecret}>I locked on Aptos</Button>
+              <LockButton hash={hash} receiver={receiver} amount={amt} secret={secret}/>
+              <Button onClick={revealSecret}>I locked on Ethereum</Button>
             </div>
           )}
 
           {step === 3 && revealed && (
             <div className="mt-6">
-              <p className="text-sm mb-2">Step 3: Reveal the secret on Ethereum to claim the funds.</p>
+              <p className="text-sm mb-2">Step 3: Reveal the secret to claim the funds.</p>
               <Input readOnly value={secret} className="text-xs" />
               <RedeemButton secret={secret}/>
             </div>

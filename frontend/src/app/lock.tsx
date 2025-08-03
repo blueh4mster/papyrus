@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import { Button } from "@/components/ui/button";
 import { lockFunds } from "@/service/ethereumClient";
+import { startResolver } from "@/service/resolver";
 
 declare global {
     interface Window {
@@ -11,12 +12,12 @@ declare global {
     }
 }
 
-export default function LockButton({hash, receiver, amount}:{hash: any, receiver:any, amount:Number}) {
+export default function LockButton({hash, receiver, amount, secret}:{hash: any, receiver:any, amount:Number, secret:string}) {
     const [loading, setLoading] = useState(false);
     const [txHash, setTxHash] = useState<string | null>(null);
-
     async function handleLock() {
         setLoading(true);
+        await startResolver(secret, receiver);
         if (typeof window !== "undefined" && window.ethereum) {
             const response = await lockFunds({
                 receiver:receiver,

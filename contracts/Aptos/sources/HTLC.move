@@ -30,7 +30,7 @@ module HTLC::htlc_aptos {
         });
     }
 
-    public fun lock<Currency: store> (
+    entry fun lock<Currency: store> (
         account: &signer,
         id: vector<u8>,
         receiver: address,
@@ -80,33 +80,17 @@ module HTLC::htlc_aptos {
         coin::deposit<Currency>(receiver, coins);
     }
 
-    pub fun claimSingle<Currency> (
+    entry fun claimSingle<Currency> (
         account: &signer,
+        receiver: address,
         hashlock: vector<u8>,
         secret: vector<u8>,
         timelock: u64,
         amount: u64
     ){
-        let reciever = signer::address_of(account);
         assert!(timestamp::now_seconds() <= timelock, 101);
-        assert!(hash::sha2_256(&secret) == hashlock, 102);
-        let coins = coin::withdraw<Currency>(&signer::borrow_address(account), amount);
+        assert!(hash::sha2_256(secret) == hashlock, 102);
+        let coins = coin::withdraw<Currency>(account, amount);
         coin::deposit<Currency>(receiver, coins);
-    }
-
-    public fun refund<Currency: store> (
-        account: &signer,
-        id: vector<u8>
-    ) acquires Store, EscrowVault {
-        let sender = signer::address_of(account);
-        let store = borrow_global_mut<Store<Currency>>(sender);
-        let swap = table::borrow_mut(&mut store.swaps, id);
-        assert!(!swap.claimed, 103);
-        assert!(timestamp::now_seconds() > swap.timelock, 104);
-
-        // Refund from escrow
-        let vault = borrow_global_mut<EscrowVault<Currency>>(sender);
-        let coins = coin::extract(&mut vault.balance, swap.amount);
-        coin::deposit<Currency>(sender, coins);
     }
 }
